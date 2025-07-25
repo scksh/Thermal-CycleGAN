@@ -1,23 +1,23 @@
 .DS_Store
 debug*
-datasets/
-checkpoints/
-results/
-build/
-dist/
-*.png
-torch.egg-info/
-*/**/__pycache__
-torch/version.py
-torch/csrc/generic/TensorMethods.cpp
-torch/lib/*.so*
-torch/lib/*.dylib*
-torch/lib/*.h
-torch/lib/build
-torch/lib/tmp_install
-torch/lib/include
-torch/lib/torch_shm_manager
-torch/csrc/cudnn/cuDNN.cpp
+# datasets/
+# checkpoints/
+# results/
+# build/
+# dist/
+# *.png
+# torch.egg-info/
+# */**/__pycache__
+# torch/version.py
+# torch/csrc/generic/TensorMethods.cpp
+# torch/lib/*.so*
+# torch/lib/*.dylib*
+# torch/lib/*.h
+# torch/lib/build
+# torch/lib/tmp_install
+# torch/lib/include
+# torch/lib/torch_shm_manager
+# torch/csrc/cudnn/cuDNN.cpp
 torch/csrc/nn/THNN.cwrap
 torch/csrc/nn/THNN.cpp
 torch/csrc/nn/THCUNN.cwrap
