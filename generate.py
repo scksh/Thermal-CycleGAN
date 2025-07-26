@@ -1,84 +1,118 @@
 import os
-import argparse
+import cv2
 import torch
-from torchvision import transforms
+import argparse
+import numpy as np
 from PIL import Image
-from models.networks import define_G  # Import your generator definition
+from tqdm import tqdm
+from models import networks
+import torchvision.transforms as transforms
 
-def load_input_image(rgb_path, seg_path, transform):
-    """Load and preprocess RGB and segmentation image, then concatenate."""
-    rgb = Image.open(rgb_path).convert('RGB')
-    seg = Image.open(seg_path).convert('L')  # Grayscale
+def remove_module_prefix(state_dict):
+    """Remove 'module.' prefix from state_dict keys (for DataParallel checkpoints)."""
+    new_state_dict = {}
+    for k, v in state_dict.items():
+        if k.startswith('module.'):
+            new_key = k[7:]  # remove 'module.' prefix
+        else:
+            new_key = k
+        new_state_dict[new_key] = v
+    return new_state_dict
 
-    rgb_tensor = transform(rgb)
-    seg_tensor = transform(seg)
+def main(opt):
+    # Setup device
+    if opt.gpu_ids:
+        device = torch.device(f"cuda:{opt.gpu_ids[0]}" if torch.cuda.is_available() else "cpu")
+    else:
+        device = torch.device("cpu")
 
-    input_tensor = torch.cat([rgb_tensor, seg_tensor], dim=0)  # Shape: [4, H, W]
-    return input_tensor
+    # Create output directory if not exists
+    os.makedirs(opt.output_dir, exist_ok=True)
 
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--rgb_dir', type=str, required=True, help='Directory containing RGB test images')
-    parser.add_argument('--seg_dir', type=str, required=True, help='Directory containing segmentation maps')
-    parser.add_argument('--model_path', type=str, required=True, help='Path to the trained generator .pth file')
-    parser.add_argument('--output_dir', type=str, required=True, help='Directory to save generated IR images')
-    parser.add_argument('--gpu_ids', type=str, default='0', help='Comma-separated GPU IDs, e.g. "0" or "-1" for CPU')
-    return parser.parse_args()
-
-
-def main():
-    args = parse_args()
-
-    # Parse GPU IDs
-    str_ids = args.gpu_ids.split(',')
-    gpu_ids = [int(id) for id in str_ids if int(id) >= 0]
-    device = torch.device(f'cuda:{gpu_ids[0]}' if gpu_ids and torch.cuda.is_available() else 'cpu')
-
-    os.makedirs(args.output_dir, exist_ok=True)
-
-    # Define transformation
-    transform = transforms.Compose([
-        transforms.Resize((256, 256)),
-        transforms.ToTensor(),  # Converts to [0,1]
-        transforms.Normalize([0.5] * 3, [0.5] * 3),  # For RGB
-    ])
-
-    # Define generator
-    netG = define_G(input_nc=4, output_nc=1, ngf=64, netG='resnet_9blocks',
-                    norm='instance', use_dropout=False, init_type='normal', init_gain=0.02, gpu_ids=gpu_ids)
+    # Initialize Generator network (RGB+Segmentation -> IR)
+    netG = networks.define_G(
+        input_nc=4,  # 3 channels RGB + 1 channel segmentation = 4 channels input
+        output_nc=1, # 1 channel thermal output
+        ngf=64,
+        netG='resnet_9blocks',
+        norm='instance',
+        use_dropout=False,
+        init_type='normal',
+        init_gain=0.02,
+        gpu_ids=opt.gpu_ids if opt.gpu_ids else []
+    )
     netG.to(device)
-
-    # Load weights
-    state_dict = torch.load(args.model_path, map_location=device)
-    netG.load_state_dict(state_dict)
     netG.eval()
 
-    # List of RGB images
-    rgb_filenames = sorted(os.listdir(args.rgb_dir))
-    
-    for filename in rgb_filenames:
-        rgb_path = os.path.join(args.rgb_dir, filename)
-        seg_path = os.path.join(args.seg_dir, filename)
+    # Load checkpoint with possible DataParallel prefix fix
+    checkpoint = torch.load(opt.checkpoint_path, map_location=device)
+    if 'state_dict' in checkpoint:  # checkpoint may be a dict with 'state_dict'
+        state_dict = checkpoint['state_dict']
+    else:
+        state_dict = checkpoint
+    state_dict = remove_module_prefix(state_dict)
+    netG.load_state_dict(state_dict)
+    print(f"Model loaded from: {opt.checkpoint_path}")
 
-        if not os.path.exists(seg_path):
-            print(f"[WARNING] Segmentation map not found for {filename}, skipping.")
-            continue
+    # Define preprocessing (resize, tensor conversion, normalization)
+    preprocess_rgb = transforms.Compose([
+        transforms.Resize((256, 256)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
+    preprocess_seg = transforms.Compose([
+        transforms.Resize((256, 256)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5,), (0.5,))
+    ])
 
-        input_tensor = load_input_image(rgb_path, seg_path, transform)
-        input_tensor = input_tensor.unsqueeze(0).to(device)  # Add batch dim
+    # Load and sort input image file paths
+    rgb_paths = sorted([
+        os.path.join(opt.rgb_dir, f)
+        for f in os.listdir(opt.rgb_dir)
+        if f.lower().endswith(('.png', '.jpg', '.jpeg'))
+    ])
+    seg_paths = sorted([
+        os.path.join(opt.seg_dir, f)
+        for f in os.listdir(opt.seg_dir)
+        if f.lower().endswith(('.png', '.jpg', '.jpeg'))
+    ])
+
+    assert len(rgb_paths) == len(seg_paths), "Number of RGB and segmentation images must match."
+
+    for rgb_path, seg_path in tqdm(zip(rgb_paths, seg_paths), total=len(rgb_paths), desc="Generating IR images"):
+        # Load RGB and segmentation images
+        rgb = Image.open(rgb_path).convert('RGB')
+        seg = Image.open(seg_path).convert('L')
+
+        # Apply preprocessing transforms
+        rgb_tensor = preprocess_rgb(rgb)
+        seg_tensor = preprocess_seg(seg)
+
+        # Concatenate into 4-channel tensor (RGB + Segmentation)
+        input_tensor = torch.cat([rgb_tensor, seg_tensor], dim=0).unsqueeze(0).to(device)
 
         with torch.no_grad():
-            output = netG(input_tensor)[0].cpu()
+            output_tensor = netG(input_tensor)
 
-        # Rescale from [-1, 1] to [0, 1]
-        output = (output + 1) / 2.0
-        output_image = transforms.ToPILImage()(output)
+        # Convert output tensor to numpy image scaled [0, 255]
+        output_image = output_tensor.squeeze().cpu().numpy()
+        output_image = ((output_image + 1) / 2 * 255).clip(0, 255).astype(np.uint8)
 
-        save_path = os.path.join(args.output_dir, filename)
-        output_image.save(save_path)
-        print(f"Saved: {save_path}")
+        # Save output image
+        filename = os.path.basename(rgb_path)
+        save_path = os.path.join(opt.output_dir, filename)
+        Image.fromarray(output_image).save(save_path)
 
+    print(f"All images saved to: {opt.output_dir}")
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--rgb_dir', type=str, required=True, help='Path to RGB images')
+    parser.add_argument('--seg_dir', type=str, required=True, help='Path to segmentation masks')
+    parser.add_argument('--checkpoint_path', type=str, required=True, help='Path to trained generator checkpoint')
+    parser.add_argument('--output_dir', type=str, default='./generated_IR', help='Directory to save generated IR images')
+    parser.add_argument('--gpu_ids', nargs='*', type=int, default=[], help='GPU ids to use, e.g. --gpu_ids 0 1')
+    opt = parser.parse_args()
+
+    main(opt)
