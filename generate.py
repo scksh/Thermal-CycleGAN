@@ -1,4 +1,5 @@
 import os
+import cv2
 import torch
 import argparse
 import numpy as np
@@ -8,11 +9,22 @@ from models import networks
 import torchvision.transforms as transforms
 
 def remove_module_prefix(state_dict):
-    """Remove 'module.' prefix from state_dict keys (for DataParallel checkpoints)."""
+    """Remove 'module.' prefix from state_dict keys."""
     new_state_dict = {}
     for k, v in state_dict.items():
         if k.startswith('module.'):
-            new_key = k[7:]  # remove 'module.' prefix
+            new_key = k[7:]
+        else:
+            new_key = k
+        new_state_dict[new_key] = v
+    return new_state_dict
+
+def add_module_prefix(state_dict):
+    """Add 'module.' prefix to state_dict keys."""
+    new_state_dict = {}
+    for k, v in state_dict.items():
+        if not k.startswith('module.'):
+            new_key = 'module.' + k
         else:
             new_key = k
         new_state_dict[new_key] = v
@@ -40,16 +52,38 @@ def main(opt):
         init_gain=0.02,
         gpu_ids=opt.gpu_ids if opt.gpu_ids else []
     )
+
+    # If multiple GPUs specified, wrap model with DataParallel
+    if device.type == 'cuda' and len(opt.gpu_ids) > 1:
+        netG = torch.nn.DataParallel(netG, device_ids=opt.gpu_ids)
+
     netG.to(device)
     netG.eval()
 
-    # Load model weights with possible DataParallel prefix fix
+    # Load checkpoint
     checkpoint = torch.load(opt.model_path, map_location=device)
     if 'state_dict' in checkpoint:
         state_dict = checkpoint['state_dict']
     else:
         state_dict = checkpoint
-    state_dict = remove_module_prefix(state_dict)
+
+    # Fix state_dict keys to match model
+    model_keys = list(netG.state_dict().keys())
+    ckpt_keys = list(state_dict.keys())
+
+    # Check if model keys start with 'module.' (DataParallel)
+    model_has_module = model_keys[0].startswith('module.')
+    ckpt_has_module = ckpt_keys[0].startswith('module.')
+
+    if model_has_module and not ckpt_has_module:
+        # Model expects 'module.' prefix but checkpoint keys don't have it
+        state_dict = add_module_prefix(state_dict)
+    elif not model_has_module and ckpt_has_module:
+        # Model does NOT expect 'module.' prefix but checkpoint keys have it
+        state_dict = remove_module_prefix(state_dict)
+    # else keys match, no change needed
+
+    # Load weights
     netG.load_state_dict(state_dict)
     print(f"Model loaded from: {opt.model_path}")
 
