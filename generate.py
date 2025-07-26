@@ -44,15 +44,15 @@ def main(opt):
     netG.to(device)
     netG.eval()
 
-    # Load checkpoint with possible DataParallel prefix fix
-    checkpoint = torch.load(opt.checkpoint_path, map_location=device)
-    if 'state_dict' in checkpoint:  # checkpoint may be a dict with 'state_dict'
+    # Load model weights with possible DataParallel prefix fix
+    checkpoint = torch.load(opt.model_path, map_location=device)
+    if 'state_dict' in checkpoint:
         state_dict = checkpoint['state_dict']
     else:
         state_dict = checkpoint
     state_dict = remove_module_prefix(state_dict)
     netG.load_state_dict(state_dict)
-    print(f"Model loaded from: {opt.checkpoint_path}")
+    print(f"Model loaded from: {opt.model_path}")
 
     # Define preprocessing (resize, tensor conversion, normalization)
     preprocess_rgb = transforms.Compose([
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--rgb_dir', type=str, required=True, help='Path to RGB images')
     parser.add_argument('--seg_dir', type=str, required=True, help='Path to segmentation masks')
-    parser.add_argument('--checkpoint_path', type=str, required=True, help='Path to trained generator checkpoint')
+    parser.add_argument('--model_path', type=str, required=True, help='Path to trained generator model')
     parser.add_argument('--output_dir', type=str, default='./generated_IR', help='Directory to save generated IR images')
     parser.add_argument('--gpu_ids', nargs='*', type=int, default=[], help='GPU ids to use, e.g. --gpu_ids 0 1')
     opt = parser.parse_args()
