@@ -1,10 +1,6 @@
-<img src="imgs/black_poodle.gif" align="right" width="384" style="margin: 40px 0 20px 20px;">
-
-<div style="clear: both;"></div>
+<img src="imgs/black_poodle.gif" align="right" width="384">
 
 
-
-<br><br><br>
 <br><br><br>
 <br><br><br>
 
