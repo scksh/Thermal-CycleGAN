@@ -1,5 +1,6 @@
 
-<img src='imgs/black_poodle.gif' align="right" width=384>
+<img src="imgs/black_poodle.gif" align="right" width="384" style="margin: 40px 0 20px 20px;">
+
 
 <br><br><br>
 
