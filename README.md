@@ -76,13 +76,13 @@ model_path = hf_hub_download(
 ### Thermal-CycleGAN Train
 - Train a model:
 ```bash
-!python train.py --dataroot ./datasets/RGBSeg2IR --name RGBSeg2IR --model cycle_gan --direction AtoB --dataset_mode aligned --input_nc 4 --output_nc 1 --gpu_ids 0 --n_epochs 0 --n_epochs_decay 10 --lambda_identity 0 --lr_policy linear
+python train.py --dataroot ./datasets/RGBSeg2IR --name RGBSeg2IR --model cycle_gan --direction AtoB --dataset_mode aligned --input_nc 4 --output_nc 1 --gpu_ids 0 --n_epochs 0 --n_epochs_decay 10 --lambda_identity 0 --lr_policy linear
 ```
 
 ### Apply a pre-trained mode (Thermal-CycleGAN)
 - Generate the results:
 ```bash
-!python generate.py --rgb_dir ./datasets/RGBSeg2IR/testA --seg_dir ./datasets/RGBSeg2IR/testSegA --model_path ./pretrained/thermal_cyclegan.pth --output_dir ./results/generated_IR --gpu_ids 0
+python generate.py --rgb_dir ./datasets/RGBSeg2IR/testA --seg_dir ./datasets/RGBSeg2IR/testSegA --model_path ./pretrained/thermal_cyclegan.pth --output_dir ./results/generated_IR --gpu_ids 0
 ```
 
 ## Citation
