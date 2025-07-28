@@ -15,6 +15,13 @@ CycleGAN 아키텍처를 기반으로 하며 입력 채널 수와 출력 채널 
 
 또한, 실제 열화상 촬영 없이도 다양한 IR 이미지 데이터를 생성할 수 있어, 국방 분야의 위장 객체 탐지 성능 향상 및 이미지 데이터 증강에 기여할 수 있는 가능성을 열어주었습니다.
 
+## Project Environment
+- OS: Ubuntu 25.04
+- Python: 3.10
+- Pytorch:2.2.0
+- CUDA:12.1
+- GPU: NVIDIA TITAN Xp / A100 (Colab)
+
 ## Colab Notebook
 Thermal-CycleGAN Tutorial: [Google Colab](https://colab.research.google.com/drive/151BsdW-YFtof58BDCZL86fjbLWB4eYJ_?usp=drive_link) | [Code](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/generative/cyclegan.ipynb)
 
