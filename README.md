@@ -1,5 +1,5 @@
 > **본 프로젝트는 한화에어로스페이스 스마트 국방 데이터 분석과정 3기의 ```4채널을 활용한 위장 객체 탐지 고도화``` 프로젝트의 서브프로젝트로 수행되었습니다.**
-<img src="imgs/my_black_poodle.gif" align="right" width="384">
+<img src="imgs/black_poodle.gif" align="right" width="384">
 
 
 <br><br><br>
