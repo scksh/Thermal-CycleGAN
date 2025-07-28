@@ -10,7 +10,9 @@
 
 CycleGAN 아키텍처를 기반으로 하며 입력 채널 수와 출력 채널 수를 수정하여 **RGB+Seg → IR** 변환에 특화된 모델로 학습되었습니다.
 <br><br><br>
-<img src="./imgs/Thermal_CycleGAN_architecture.png" align='center' width="400"/>
+<p align="center">
+  <img src="./imgs/Thermal_CycleGAN_architecture.png" width="700"/>
+</p>
 
 ## Motivation
 객체 탐지 모델(YOLOv8)을 RGB+IR 4채널 입력 구조로 확장하기 위해 IR(열화상) 이미지 데이터를 별도로 확보해야 하는 과제가 있었고 이를 해결하고자 RGB 이미지와 해당 Segmentation 정보를 활용해 대응되는 IR 이미지를 생성하는 CycleGAN 기반의 변환 모델을 개발하게 되었습니다.
