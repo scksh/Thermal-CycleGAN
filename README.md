@@ -5,6 +5,7 @@
 <br><br><br>
 
 # Thermal-CycleGAN
+ 본 프로젝트는 한화에어로스페이스 스마트 데이터 분석과정 3기 2조의 최종 프로젝트로 진행한 '4채널을 활용한 GOP 객체 탐지 고도화'의 서브 프로젝트로 RGB이미지로 부터 IR(열화상)이미지를 
 
 ## Colab Notebook
 TensorFlow Core CycleGAN Tutorial: [Google Colab](https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/tutorials/generative/cyclegan.ipynb) | [Code](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/generative/cyclegan.ipynb)
