@@ -86,15 +86,12 @@ If you use this code for your research, please cite our papers.
 ```
 @misc{thermalcyclegan2025,
   title={Thermal-CycleGAN: Translating RGB+Segmentation to Thermal Images using CycleGAN},
-  author={Kim, Seung Hwan and Lee, Jihyeon and Park, Minwoo},
+  author={Cha, Hyunwoo and Do, Jihoon and Gang, Nayoon and Kim, Seunghwan and Lee, Haerin and Yoon, Youngbin},
   year={2025},
   howpublished={\url{https://github.com/yourusername/Thermal-CycleGAN}},
   note={GitHub repository}
 }
 ```
-
-## Other Languages
-[Spanish](docs/README_es.md)
 
 ## Acknowledgments
 Our code is inspired by 
