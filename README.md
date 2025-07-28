@@ -25,11 +25,6 @@ CycleGAN 아키텍처를 기반으로 하며 입력 채널 수와 출력 채널 
 ## Colab Notebook
 Thermal-CycleGAN Tutorial: [Google Colab](https://colab.research.google.com/drive/151BsdW-YFtof58BDCZL86fjbLWB4eYJ_?usp=drive_link) | [Code](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/generative/cyclegan.ipynb)
 
-## Prerequisites
-- Linux or macOS
-- Python 3
-- CPU or NVIDIA GPU + CUDA CuDNN
-
 ## Getting Started
 ### Installation
 
