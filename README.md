@@ -9,9 +9,8 @@
 **Thermal-CycleGAN**은 RGB 이미지와 해당 Segmentation Map을 결합한 4채널을 입력으로 받아 대응되는 IR(열화상) 이미지를 생성하는 Unpaired Image-to-Image Translation 모델입니다.
 
 CycleGAN 아키텍처를 기반으로 하며 입력 채널 수와 출력 채널 수를 수정하여 **RGB+Seg → IR** 변환에 특화된 모델로 학습되었습니다.
-<br><br><br>
 <p align="center">
-  <img src="./imgs/Thermal_CycleGAN_architecture.png" width="700"/>
+  <img src="./imgs/Thermal_CycleGAN_architecture.png" width="900"/>
 </p>
 
 ## Motivation
