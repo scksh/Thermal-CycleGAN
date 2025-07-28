@@ -35,20 +35,26 @@ Thermal-CycleGAN Tutorial: [Google Colab](https://colab.research.google.com/driv
 
 - Clone this repo:
 ```bash
-git clone https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
-cd pytorch-CycleGAN-and-pix2pix
+git clone https://github.com/scksh/Thermal-CycleGAN
+cd Thermal-CycleGAN
 ```
+- For pip users, please type the command `pip install -r requirements.txt`.
 
-- Install [PyTorch](http://pytorch.org) and 0.4+ and other dependencies (e.g., torchvision, [visdom](https://github.com/facebookresearch/visdom) and [dominate](https://github.com/Knio/dominate)).
-  - For pip users, please type the command `pip install -r requirements.txt`.
-  - For Conda users, you can create a new Conda environment using `conda env create -f environment.yml`.
-  - For Docker users, we provide the pre-built Docker image and Dockerfile. Please refer to our [Docker](docs/docker.md) page.
-  - For Repl users, please click [![Run on Repl.it](https://repl.it/badge/github/junyanz/pytorch-CycleGAN-and-pix2pix)](https://repl.it/github/junyanz/pytorch-CycleGAN-and-pix2pix).
+### Download Dataset (HuggingFace)
+- You can download the `RGBSeg2IR` dataset directly from Hugging Face Hub using the following Python code:
+```python
+from huggingface_hub import hf_hub_download
+import zipfile
 
-### CycleGAN train/test
-- Download a CycleGAN dataset (e.g. maps):
-```bash
-bash ./datasets/download_cyclegan_dataset.sh maps
+# Download dataset
+zip_path = hf_hub_download(
+    repo_id="SUMMERZETT/RGBSeg2IR",
+    filename="RGBSeg2IR.zip",
+    repo_type="dataset"
+)
+
+with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+    zip_ref.extractall("./datasets")
 ```
 - To view training results and loss plots, run `python -m visdom.server` and click the URL http://localhost:8097.
 - To log training progress and test images to W&B dashboard, set the `--use_wandb` flag with train and test script
