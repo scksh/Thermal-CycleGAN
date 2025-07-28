@@ -11,6 +11,7 @@
 CycleGAN 아키텍처를 기반으로 하며 입력 채널 수와 출력 채널 수를 수정하여 **RGB+Seg → IR** 변환에 특화된 모델로 학습되었습니다.
 <p align="center">
   <img src="./imgs/Thermal_CycleGAN_architecture.png" width="900"/>
+  <img src="./imgs/results.png" width="900"/>
 </p>
 
 ## Motivation
