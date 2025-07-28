@@ -98,5 +98,5 @@ If you use this code for your research, please cite our papers.
 
 ## Acknowledgments
 Our code is inspired by 
-- [CycleGAN and pix2pix in PyTorch](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)).
-- [ThermalGAN](https://github.com/vlkniaz/ThermalGAN)
+- [CycleGAN and pix2pix in PyTorch](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)
+- [ThermalGAN](https://github.com/vlkniaz/ThermalGAN).
