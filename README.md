@@ -27,7 +27,7 @@ CycleGAN 아키텍처를 기반으로 하며 입력 채널 수와 출력 채널 
 - GPU: NVIDIA TITAN Xp / A100 (Colab)
 
 ## Colab Notebook
-Thermal-CycleGAN Tutorial: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/151BsdW-YFtof58BDCZL86fjbLWB4eYJ_?usp=drive_link) | [![GitHub](https://img.shields.io/badge/View%20Code-GitHub-blue?logo=github)]([https://github.com/tensorflow/docs/blob/master/site/en/tutorials/generative/cyclegan.ipynb](https://github.com/scksh/Thermal-CycleGAN/blob/main/Thermal_CycleGAN.ipynb))
+Thermal-CycleGAN Tutorial: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/151BsdW-YFtof58BDCZL86fjbLWB4eYJ_?usp=drive_link) | [![GitHub](https://img.shields.io/badge/View%20Code-GitHub-blue?logo=github)]([https://github.com/scksh/Thermal-CycleGAN/blob/main/Thermal_CycleGAN.ipynb](https://github.com/scksh/Thermal-CycleGAN/blob/main/Thermal_CycleGAN.ipynb)))
 
 ## Getting Started
 ### Installation
