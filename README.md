@@ -93,7 +93,7 @@ If you use this code for your research, please cite our papers.
   title={Thermal-CycleGAN: Translating RGB+Segmentation to Thermal Images using CycleGAN},
   author={Cha, Hyunwoo and Do, Jihoon and Gang, Nayoon and Kim, Seunghwan and Lee, Haerin and Yoon, Youngbin},
   year={2025},
-  howpublished={\url{https://github.com/yourusername/Thermal-CycleGAN}},
+  howpublished={\url{https://github.com/scksh/Thermal-CycleGAN}},
   note={GitHub repository}
 }
 ```
